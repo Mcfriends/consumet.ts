@@ -2,7 +2,7 @@
 
 <h1 align="center"> consumet.ts </h1>
 
-consumet.ts is a Node library which provides high-level APIs to get information about several entertainment mediums like books, movies, comics, anime, manga, etc.
+A custom for of Comsumet - consumet.ts is a Node library which provides high-level APIs to get information about several entertainment mediums like books, movies, comics, anime, manga, etc.
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@consumet/extensions">
