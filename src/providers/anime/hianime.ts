@@ -599,15 +599,15 @@ class Hianime extends AnimeParser {
         });
 
       switch (
-        $$$('.item.item-title').find("span.item-head:contains('Status')").next('span.name').text().trim()
+        $$$('.item.item-title').find("span.item-head:contains('Status')").next('span.name').text().trim().toLowerCase()
       ) {
-        case 'Finished Airing':
+        case 'finished airing':
           info.status = MediaStatus.COMPLETED;
           break;
-        case 'Currently Airing':
+        case 'currently airing':
           info.status = MediaStatus.ONGOING;
           break;
-        case 'Not yet aired':
+        case 'not yet aired':
           info.status = MediaStatus.NOT_YET_AIRED;
           break;
         default:

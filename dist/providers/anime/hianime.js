@@ -4,6 +4,9 @@ const cheerio_1 = require("cheerio");
 const models_1 = require("../../models");
 const extractors_1 = require("../../extractors");
 const utils_1 = require("../../utils");
+const stripTags = (str) => {
+    return str === null || str === void 0 ? void 0 : str.replace(/<[^>]*>/g, '').trim();
+};
 class Hianime extends models_1.AnimeParser {
     constructor() {
         super(...arguments);
@@ -17,7 +20,7 @@ class Hianime extends models_1.AnimeParser {
          * @returns Promise<IAnimeInfo>
          */
         this.fetchAnimeInfo = async (id) => {
-            var _a, _b;
+            var _a, _b, _c, _d;
             const info = {
                 id: id,
                 title: '',
@@ -57,17 +60,21 @@ class Hianime extends models_1.AnimeParser {
                         episodes: parseInt((_g = card.find('.tick-item.tick-eps')) === null || _g === void 0 ? void 0 : _g.text()) || 0,
                     });
                 });
-                const hasSub = $('div.film-stats div.tick div.tick-item.tick-sub').length > 0;
-                const hasDub = $('div.film-stats div.tick div.tick-item.tick-dub').length > 0;
-                if (hasSub) {
+                info.showRating = $('.tick-item.tick-quality').prev().text().trim();
+                info.nsfw = info.ShowRating === '18+';
+                const sub = parseInt(stripTags((_c = $('div.film-stats div.tick div.tick-item.tick-sub')) === null || _c === void 0 ? void 0 : _c.text()) || '0');
+                const dub = parseInt(stripTags((_d = $('div.film-stats div.tick div.tick-item.tick-dub')) === null || _d === void 0 ? void 0 : _d.text()) || '0');
+                info.sub = sub;
+                info.dub = dub;
+                if (sub > 0) {
                     info.subOrDub = models_1.SubOrSub.SUB;
-                    info.hasSub = hasSub;
+                    info.hasSub = true;
                 }
-                if (hasDub) {
+                if (dub > 0) {
                     info.subOrDub = models_1.SubOrSub.DUB;
-                    info.hasDub = hasDub;
+                    info.hasDub = true;
                 }
-                if (hasSub && hasDub) {
+                if (sub > 0 && dub > 0) {
                     info.subOrDub = models_1.SubOrSub.BOTH;
                 }
                 // hianime - PAGE INFO
@@ -115,7 +122,7 @@ class Hianime extends models_1.AnimeParser {
                     },
                 });
                 const $_ = (0, cheerio_1.load)(ratingAjax.data.html);
-                info.rating = parseFloat($_('.rr-mark').text().replace(/<[^>]+>/, '').trim() || '0');
+                info.rating = parseFloat(stripTags($_('.rr-mark').text()) || '0');
                 const episodesAjax = await this.client.get(`${this.baseUrl}/ajax/v2/episode/list/${id.split('-').pop()}`, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
