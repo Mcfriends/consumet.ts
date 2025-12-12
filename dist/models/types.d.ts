@@ -77,6 +77,8 @@ export interface IAnimeInfo extends IAnimeResult {
     description?: string;
     status?: MediaStatus;
     totalEpisodes?: number;
+    duration?: string;
+    quality?: string;
     /**
      * @deprecated use `hasSub` or `hasDub` instead
      */

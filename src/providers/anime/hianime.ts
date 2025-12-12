@@ -539,6 +539,8 @@ class Hianime extends AnimeParser {
       info.description = $('div.film-description').text().trim();
       // Movie, TV, OVA, ONA, Special, Music
       info.type = $('span.item').last().prev().prev().text().toUpperCase() as MediaFormat;
+      info.duration = $('span.item')?.last().text().trim();
+      info.quality = $('.tick-item.tick-quality')?.text().trim();
       info.url = `${this.baseUrl}/${id}`;
       info.recommendations = await this.scrapeCard($);
       info.relatedAnime = [];
@@ -615,6 +617,20 @@ class Hianime extends AnimeParser {
           .text()
           .trim();
       }
+
+      const ratingAjax = await this.client.get(
+        `${this.baseUrl}/ajax/vote/info/${id.split('-').pop()}`,
+        {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            Referer: `${this.baseUrl}/watch/${id}`,
+          },
+        }
+      );
+
+      const $_ = load(ratingAjax.data.html);
+      info.rating = parseFloat($_('.rr-mark').text().replace(/<[^>]+>/, '').trim() || '0');
+      
 
       const episodesAjax = await this.client.get(
         `${this.baseUrl}/ajax/v2/episode/list/${id.split('-').pop()}`,
@@ -891,6 +907,8 @@ class Hianime extends AnimeParser {
             sub: parseInt(card.find('.tick-item.tick-sub')?.text()) || 0,
             dub: parseInt(card.find('.tick-item.tick-dub')?.text()) || 0,
             episodes: parseInt(card.find('.tick-item.tick-eps')?.text()) || 0,
+            releaseDate: card.find('.fdi-release')?.text() || '',
+            description: card.find('.fdi-description')?.text().trim(),
           });
         } catch (cardErr) {
           // Continue with next card instead of failing completely

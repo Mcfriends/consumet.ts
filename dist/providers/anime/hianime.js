@@ -17,6 +17,7 @@ class Hianime extends models_1.AnimeParser {
          * @returns Promise<IAnimeInfo>
          */
         this.fetchAnimeInfo = async (id) => {
+            var _a, _b;
             const info = {
                 id: id,
                 title: '',
@@ -34,6 +35,8 @@ class Hianime extends models_1.AnimeParser {
                 info.description = $('div.film-description').text().trim();
                 // Movie, TV, OVA, ONA, Special, Music
                 info.type = $('span.item').last().prev().prev().text().toUpperCase();
+                info.duration = (_a = $('span.item')) === null || _a === void 0 ? void 0 : _a.last().text().trim();
+                info.quality = (_b = $('.tick-item.tick-quality')) === null || _b === void 0 ? void 0 : _b.text().trim();
                 info.url = `${this.baseUrl}/${id}`;
                 info.recommendations = await this.scrapeCard($);
                 info.relatedAnime = [];
@@ -105,6 +108,14 @@ class Hianime extends models_1.AnimeParser {
                         .text()
                         .trim();
                 }
+                const ratingAjax = await this.client.get(`${this.baseUrl}/ajax/vote/info/${id.split('-').pop()}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        Referer: `${this.baseUrl}/watch/${id}`,
+                    },
+                });
+                const $_ = (0, cheerio_1.load)(ratingAjax.data.html);
+                info.rating = parseFloat($_('.rr-mark').text().replace(/<[^>]+>/, '').trim() || '0');
                 const episodesAjax = await this.client.get(`${this.baseUrl}/ajax/v2/episode/list/${id.split('-').pop()}`, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -317,7 +328,7 @@ class Hianime extends models_1.AnimeParser {
             try {
                 const results = [];
                 $('.flw-item').each((i, ele) => {
-                    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
                     try {
                         const card = $(ele);
                         const atag = card.find('.film-name a');
@@ -345,6 +356,8 @@ class Hianime extends models_1.AnimeParser {
                             sub: parseInt((_g = card.find('.tick-item.tick-sub')) === null || _g === void 0 ? void 0 : _g.text()) || 0,
                             dub: parseInt((_h = card.find('.tick-item.tick-dub')) === null || _h === void 0 ? void 0 : _h.text()) || 0,
                             episodes: parseInt((_j = card.find('.tick-item.tick-eps')) === null || _j === void 0 ? void 0 : _j.text()) || 0,
+                            releaseDate: ((_k = card.find('.fdi-release')) === null || _k === void 0 ? void 0 : _k.text()) || '',
+                            description: (_l = card.find('.fdi-description')) === null || _l === void 0 ? void 0 : _l.text().trim(),
                         });
                     }
                     catch (cardErr) {
