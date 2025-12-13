@@ -1,5 +1,6 @@
 import { VideoExtractor, IVideo, ISubtitle, ISource } from '../models';
 import { CheerioAPI, load } from 'cheerio';
+import { IThumbnails } from '../models/types';
 
 export interface IMegaCloudOutput {
   headers: Record<string, string>;
@@ -89,15 +90,24 @@ class MegaCloud extends VideoExtractor {
         );
 
         const subtitles: ISubtitle[] =
-          data.tracks?.map(t => ({
-            lang: t.label ?? 'Unknown',
-            url: t.file || '',
-            kind: t.kind ?? 'captions',
-          })) ?? [];
+          data.tracks
+            ?.filter(x => x.kind === 'captions')
+            .map(t => ({
+              lang: t.label ?? 'Unknown',
+              url: t.file || '',
+            })) ?? [];
+
+        const thumbnails: IThumbnails[] =
+          data.tracks
+            ?.filter(x => x.kind === 'thumbnails')
+            .map(t => ({
+              url: t.file || '',
+            })) ?? [];
 
         const result: ISource = {
           sources: this.sources,
           subtitles,
+          thumbnails,
           intro: data.intro
             ? {
                 start: data.intro.start!,

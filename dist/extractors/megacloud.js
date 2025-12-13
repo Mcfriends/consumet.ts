@@ -8,7 +8,7 @@ class MegaCloud extends models_1.VideoExtractor {
         this.serverName = 'MegaCloud';
         this.sources = [];
         this.extract = async (videoUrl, referer) => {
-            var _a, _b;
+            var _a, _b, _c, _d;
             try {
                 const { data: embedData } = await this.client.get(videoUrl.href, {
                     headers: {
@@ -58,17 +58,20 @@ class MegaCloud extends models_1.VideoExtractor {
                             isDASH: (_e = (_d = src.file) === null || _d === void 0 ? void 0 : _d.includes('.mpd')) !== null && _e !== void 0 ? _e : false,
                         });
                     });
-                    const subtitles = (_b = (_a = data.tracks) === null || _a === void 0 ? void 0 : _a.map(t => {
-                        var _a, _b;
+                    const subtitles = (_b = (_a = data.tracks) === null || _a === void 0 ? void 0 : _a.filter(x => x.kind === 'captions').map(t => {
+                        var _a;
                         return ({
                             lang: (_a = t.label) !== null && _a !== void 0 ? _a : 'Unknown',
                             url: t.file || '',
-                            kind: (_b = t.kind) !== null && _b !== void 0 ? _b : 'captions',
                         });
                     })) !== null && _b !== void 0 ? _b : [];
+                    const thumbnails = (_d = (_c = data.tracks) === null || _c === void 0 ? void 0 : _c.filter(x => x.kind === 'thumbnails').map(t => ({
+                        url: t.file || '',
+                    }))) !== null && _d !== void 0 ? _d : [];
                     const result = {
                         sources: this.sources,
                         subtitles,
+                        thumbnails,
                         intro: data.intro
                             ? {
                                 start: data.intro.start,

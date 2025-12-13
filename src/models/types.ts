@@ -352,11 +352,17 @@ export interface ISubtitle {
    * The language of the subtitle
    */
   lang: string;
+}
 
+export interface IThumbnails {
   /**
-   * The kind of subtitle (e.g. captions, subtitles, descriptions)
+   * The id of the thumbnails. **not** required
    */
-  kind?: string;
+  id?: string;
+  /**
+   * The **url** that should take you to the thumbnails **directly**.
+   */
+  url: string;
 }
 
 /**
@@ -372,6 +378,7 @@ export interface ISource {
   intro?: Intro;
   outro?: Intro;
   subtitles?: ISubtitle[];
+  thumbnails?: IThumbnails[];
   sources: IVideo[];
   download?: string | { url?: string; quality?: string }[];
   embedURL?: string;
