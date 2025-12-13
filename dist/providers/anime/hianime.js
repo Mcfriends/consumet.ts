@@ -89,7 +89,12 @@ class Hianime extends models_1.AnimeParser {
                     if (genre != undefined)
                         (_a = info.genres) === null || _a === void 0 ? void 0 : _a.push(genre);
                 });
-                switch ($$$('.item.item-title').find("span.item-head:contains('Status')").next('span.name').text().trim().toLowerCase()) {
+                switch ($$$('.item.item-title')
+                    .find("span.item-head:contains('Status')")
+                    .next('span.name')
+                    .text()
+                    .trim()
+                    .toLowerCase()) {
                     case 'finished airing':
                         info.status = models_1.MediaStatus.COMPLETED;
                         break;
@@ -172,7 +177,7 @@ class Hianime extends models_1.AnimeParser {
                     case models_1.StreamingServers.VidCloud:
                         return {
                             headers: { Referer: serverUrl.href },
-                            ...(await new extractors_1.MegaCloud().extract(serverUrl)),
+                            ...(await new extractors_1.MegaCloud().extract(serverUrl, this.baseUrl)),
                         };
                     case models_1.StreamingServers.StreamSB:
                         return {
@@ -192,7 +197,7 @@ class Hianime extends models_1.AnimeParser {
                     case models_1.StreamingServers.VidCloud:
                         return {
                             headers: { Referer: serverUrl.href },
-                            ...(await new extractors_1.MegaCloud().extract(serverUrl)),
+                            ...(await new extractors_1.MegaCloud().extract(serverUrl, this.baseUrl)),
                         };
                 }
             }

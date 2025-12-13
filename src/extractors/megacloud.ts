@@ -37,11 +37,11 @@ class MegaCloud extends VideoExtractor {
       const { data: embedData } = await this.client.get(videoUrl.href, {
         headers: {
           Referer: referer,
-        }
+        },
       });
 
       const $ = load(embedData);
-      const dataId = $("div[data-id]").attr("data-id")!;
+      const dataId = $('div[data-id]').attr('data-id')!;
 
       let nonce: string | null = null;
 
@@ -58,7 +58,7 @@ class MegaCloud extends VideoExtractor {
         while ((m = regex16.exec(embedData)) !== null) {
           if (m[1]) parts.push(m[1]);
         }
-        if (parts.length) nonce = parts.join("");
+        if (parts.length) nonce = parts.join('');
       }
 
       if (nonce) {
@@ -79,12 +79,14 @@ class MegaCloud extends VideoExtractor {
           throw new Error('No sources returned');
         }
 
-        data.sources.forEach(src => this.sources.push({
-          url: src.file || '',
-          quality: src.type ?? 'auto',
-          isM3U8: src.file?.includes('.m3u8') ?? false,
-          isDASH: src.file?.includes('.mpd') ?? false,
-        }));
+        data.sources.forEach(src =>
+          this.sources.push({
+            url: src.file || '',
+            quality: src.type ?? 'auto',
+            isM3U8: src.file?.includes('.m3u8') ?? false,
+            isDASH: src.file?.includes('.mpd') ?? false,
+          })
+        );
 
         const subtitles: ISubtitle[] =
           data.tracks?.map(t => ({
@@ -96,25 +98,29 @@ class MegaCloud extends VideoExtractor {
         const result: ISource = {
           sources: this.sources,
           subtitles,
-          intro: data.intro ? {
-            start: data.intro.start!,
-            end: data.intro.end!,
-          } : { start: 0, end: 0 },
-          outro: data.outro ? {
-            start: data.outro.start!,
-            end: data.outro.end!,
-          } : { start: 0, end: 0 },
+          intro: data.intro
+            ? {
+                start: data.intro.start!,
+                end: data.intro.end!,
+              }
+            : { start: 0, end: 0 },
+          outro: data.outro
+            ? {
+                start: data.outro.start!,
+                end: data.outro.end!,
+              }
+            : { start: 0, end: 0 },
           headers: {
             ...data.headers,
             Referer: videoUrl.href,
           },
           embedURL: videoUrl.href,
-        }
+        };
 
         return result;
       }
 
-      return { sources: [], subtitles: [] }
+      return { sources: [], subtitles: [] };
     } catch (err) {
       throw new Error(`Failed to extract video sources for ${videoUrl.href}: ${(err as Error).message}`);
     }

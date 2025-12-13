@@ -349,6 +349,7 @@ export interface ISource {
         quality?: string;
     }[];
     embedURL?: string;
+    [x: string]: unknown;
 }
 /**
  * Used **only** for movie/tvshow providers

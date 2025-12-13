@@ -418,7 +418,7 @@ class HiMovies extends models_1.MovieParser {
             case models_1.StreamingServers.MegaCloud:
                 return {
                     headers: { Referer: serverUrl.href },
-                    ...(await new extractors_1.MegaCloud(this.proxyConfig, this.adapter).extract(serverUrl)),
+                    ...(await new extractors_1.MegaCloud(this.proxyConfig, this.adapter).extract(serverUrl, this.baseUrl)),
                 };
             case models_1.StreamingServers.VideoStr:
                 return {
@@ -428,7 +428,7 @@ class HiMovies extends models_1.MovieParser {
             default:
                 return {
                     headers: { Referer: serverUrl.href },
-                    ...(await new extractors_1.MegaCloud(this.proxyConfig, this.adapter).extract(serverUrl)),
+                    ...(await new extractors_1.MegaCloud(this.proxyConfig, this.adapter).extract(serverUrl, this.baseUrl)),
                 };
         }
     }

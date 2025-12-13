@@ -20,7 +20,7 @@ import { USER_AGENT } from '../../utils';
 
 const stripTags = (str: string): string | undefined => {
   return str?.replace(/<[^>]*>/g, '').trim();
-}
+};
 
 class Hianime extends AnimeParser {
   override readonly name = 'hianime';
@@ -566,7 +566,7 @@ class Hianime extends AnimeParser {
       });
 
       info.showRating = $('.tick-item.tick-quality').prev().text().trim();
-      info.nsfw = info.ShowRating === '18+'; 
+      info.nsfw = info.ShowRating === '18+';
 
       const sub = parseInt(stripTags($('div.film-stats div.tick div.tick-item.tick-sub')?.text()) || '0');
       const dub = parseInt(stripTags($('div.film-stats div.tick div.tick-item.tick-dub')?.text()) || '0');
@@ -599,7 +599,12 @@ class Hianime extends AnimeParser {
         });
 
       switch (
-        $$$('.item.item-title').find("span.item-head:contains('Status')").next('span.name').text().trim().toLowerCase()
+        $$$('.item.item-title')
+          .find("span.item-head:contains('Status')")
+          .next('span.name')
+          .text()
+          .trim()
+          .toLowerCase()
       ) {
         case 'finished airing':
           info.status = MediaStatus.COMPLETED;
@@ -629,19 +634,15 @@ class Hianime extends AnimeParser {
           .trim();
       }
 
-      const ratingAjax = await this.client.get(
-        `${this.baseUrl}/ajax/vote/info/${id.split('-').pop()}`,
-        {
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            Referer: `${this.baseUrl}/watch/${id}`,
-          },
-        }
-      );
+      const ratingAjax = await this.client.get(`${this.baseUrl}/ajax/vote/info/${id.split('-').pop()}`, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          Referer: `${this.baseUrl}/watch/${id}`,
+        },
+      });
 
       const $_ = load(ratingAjax.data.html);
       info.rating = parseFloat(stripTags($_('.rr-mark').text()) || '0');
-      
 
       const episodesAjax = await this.client.get(
         `${this.baseUrl}/ajax/v2/episode/list/${id.split('-').pop()}`,
