@@ -50,12 +50,11 @@ class MegaCloud extends models_1.VideoExtractor {
                         throw new Error('No sources returned');
                     }
                     data.sources.forEach(src => {
-                        var _a, _b, _c, _d, _e;
+                        var _a, _b, _c, _d;
                         return this.sources.push({
                             url: src.file || '',
-                            quality: (_a = src.type) !== null && _a !== void 0 ? _a : 'auto',
-                            isM3U8: (_c = (_b = src.file) === null || _b === void 0 ? void 0 : _b.includes('.m3u8')) !== null && _c !== void 0 ? _c : false,
-                            isDASH: (_e = (_d = src.file) === null || _d === void 0 ? void 0 : _d.includes('.mpd')) !== null && _e !== void 0 ? _e : false,
+                            isM3U8: (_b = (_a = src.file) === null || _a === void 0 ? void 0 : _a.includes('.m3u8')) !== null && _b !== void 0 ? _b : false,
+                            isDASH: (_d = (_c = src.file) === null || _c === void 0 ? void 0 : _c.includes('.mpd')) !== null && _d !== void 0 ? _d : false,
                         });
                     });
                     const subtitles = (_b = (_a = data.tracks) === null || _a === void 0 ? void 0 : _a.filter(x => x.kind === 'captions').map(t => {

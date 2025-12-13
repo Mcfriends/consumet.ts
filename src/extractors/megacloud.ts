@@ -83,7 +83,6 @@ class MegaCloud extends VideoExtractor {
         data.sources.forEach(src =>
           this.sources.push({
             url: src.file || '',
-            quality: src.type ?? 'auto',
             isM3U8: src.file?.includes('.m3u8') ?? false,
             isDASH: src.file?.includes('.mpd') ?? false,
           })
