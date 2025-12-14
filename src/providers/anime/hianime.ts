@@ -795,6 +795,70 @@ class Hianime extends AnimeParser {
     }
   };
 
+  async fetchEpisodeSourceLink(
+    episodeId: string,
+    server: StreamingServers = StreamingServers.VidCloud,
+    subOrDub: SubOrSub = SubOrSub.SUB
+  ): Promise<string> {
+    if (!episodeId.includes('$episode$')) throw new Error('Invalid episode id');
+
+    episodeId = episodeId
+      .replace('$episode$', '[[]]')
+      .replace(/\$auto|\$sub|\$dub/gi, '');
+
+    try {
+      const { data } = await this.client.get(
+        `${this.baseUrl}/ajax/v2/episode/servers?episodeId=${episodeId.split('[[]]')[1]}`
+      );
+
+      const $ = load(data.html);
+
+      /**
+       * vidtreaming -> 4
+       * rapidcloud  -> 1
+       * streamsb -> 5
+       * streamtape -> 3
+       */
+      let serverId = '';
+      try {
+        switch (server) {
+          case StreamingServers.VidCloud:
+            serverId = this.retrieveServerId($, 1, subOrDub);
+
+            // hianime's vidcloud server is rapidcloud
+            if (!serverId) throw new Error('RapidCloud not found');
+            break;
+          case StreamingServers.VidStreaming:
+            serverId = this.retrieveServerId($, 4, subOrDub);
+
+            // hianime's vidcloud server is rapidcloud
+            if (!serverId) throw new Error('vidtreaming not found');
+            break;
+          case StreamingServers.StreamSB:
+            serverId = this.retrieveServerId($, 5, subOrDub);
+
+            if (!serverId) throw new Error('StreamSB not found');
+            break;
+          case StreamingServers.StreamTape:
+            serverId = this.retrieveServerId($, 3, subOrDub);
+
+            if (!serverId) throw new Error('StreamTape not found');
+            break;
+        }
+      } catch (err) {
+        throw new Error("Couldn't find server. Try another server");
+      }
+
+      const {
+        data: { link },
+      } = await this.client.get(`${this.baseUrl}/ajax/v2/episode/sources?id=${serverId}`);
+
+      return link;
+    } catch (err) {
+      throw err;
+    }
+  };
+
    /**
    * Fetch all animes ordered alphabetically from A-Z.
    * 
@@ -806,7 +870,7 @@ class Hianime extends AnimeParser {
       page = 1;
     }
     return this.scrapeCardPage(`${this.baseUrl}/az-list?page=${page}`);
-  }
+  };
 
   private verifyLoginState = async (connectSid: string): Promise<boolean> => {
     try {

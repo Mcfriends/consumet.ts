@@ -846,6 +846,59 @@ class Hianime extends models_1.AnimeParser {
             headers: { Cookie: `connect.sid=${connectSid}` },
         });
     }
+    async fetchEpisodeSourceLink(episodeId, server = models_1.StreamingServers.VidCloud, subOrDub = models_1.SubOrSub.SUB) {
+        if (!episodeId.includes('$episode$'))
+            throw new Error('Invalid episode id');
+        episodeId = episodeId
+            .replace('$episode$', '[[]]')
+            .replace(/\$auto|\$sub|\$dub/gi, '');
+        try {
+            const { data } = await this.client.get(`${this.baseUrl}/ajax/v2/episode/servers?episodeId=${episodeId.split('[[]]')[1]}`);
+            const $ = (0, cheerio_1.load)(data.html);
+            /**
+             * vidtreaming -> 4
+             * rapidcloud  -> 1
+             * streamsb -> 5
+             * streamtape -> 3
+             */
+            let serverId = '';
+            try {
+                switch (server) {
+                    case models_1.StreamingServers.VidCloud:
+                        serverId = this.retrieveServerId($, 1, subOrDub);
+                        // hianime's vidcloud server is rapidcloud
+                        if (!serverId)
+                            throw new Error('RapidCloud not found');
+                        break;
+                    case models_1.StreamingServers.VidStreaming:
+                        serverId = this.retrieveServerId($, 4, subOrDub);
+                        // hianime's vidcloud server is rapidcloud
+                        if (!serverId)
+                            throw new Error('vidtreaming not found');
+                        break;
+                    case models_1.StreamingServers.StreamSB:
+                        serverId = this.retrieveServerId($, 5, subOrDub);
+                        if (!serverId)
+                            throw new Error('StreamSB not found');
+                        break;
+                    case models_1.StreamingServers.StreamTape:
+                        serverId = this.retrieveServerId($, 3, subOrDub);
+                        if (!serverId)
+                            throw new Error('StreamTape not found');
+                        break;
+                }
+            }
+            catch (err) {
+                throw new Error("Couldn't find server. Try another server");
+            }
+            const { data: { link }, } = await this.client.get(`${this.baseUrl}/ajax/v2/episode/sources?id=${serverId}`);
+            return link;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+    ;
     /**
     * Fetch all animes ordered alphabetically from A-Z.
     *
@@ -858,6 +911,7 @@ class Hianime extends models_1.AnimeParser {
         }
         return this.scrapeCardPage(`${this.baseUrl}/az-list?page=${page}`);
     }
+    ;
 }
 exports.default = Hianime;
 //# sourceMappingURL=hianime.js.map

@@ -132,6 +132,7 @@ declare class Hianime extends AnimeParser {
      * @returns Promise<ISource>
      */
     fetchEpisodeSources: (episodeId: string, server?: StreamingServers, subOrDub?: SubOrSub) => Promise<ISource>;
+    fetchEpisodeSourceLink(episodeId: string, server?: StreamingServers, subOrDub?: SubOrSub): Promise<string>;
     /**
     * Fetch all animes ordered alphabetically from A-Z.
     *

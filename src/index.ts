@@ -39,6 +39,33 @@ import {
   ProxyConfig,
 } from './models';
 
+import {
+  AsianLoad,
+  BilibiliExtractor,
+  Filemoon,
+  GogoCDN,
+  Kwik,
+  MixDrop,
+  Mp4Player,
+  Mp4Upload,
+  RapidCloud,
+  MegaCloud,
+  SmashyStream,
+  StreamHub,
+  StreamLare,
+  StreamSB,
+  StreamTape,
+  StreamWish,
+  VidCloud,
+  VidMoly,
+  VizCloud,
+  VidHide,
+  VideoStr,
+  Voe,
+  MegaUp,
+  Luffy,
+} from './extractors';
+
 export { ANIME, BOOKS, COMICS, MANGA, LIGHT_NOVELS, MOVIES, META, NEWS };
 export { PROVIDERS_LIST };
 export {
@@ -78,4 +105,30 @@ export {
   ITitle,
   MediaFormat,
   ProxyConfig,
+
+  // extractors
+  AsianLoad,
+  BilibiliExtractor,
+  Filemoon,
+  GogoCDN,
+  Kwik,
+  MixDrop,
+  Mp4Player,
+  Mp4Upload,
+  RapidCloud,
+  MegaCloud,
+  SmashyStream,
+  StreamHub,
+  StreamLare,
+  StreamSB,
+  StreamTape,
+  StreamWish,
+  VidCloud,
+  VidMoly,
+  VizCloud,
+  VidHide,
+  VideoStr,
+  Voe,
+  MegaUp,
+  Luffy,
 };
